@@ -100,7 +100,7 @@ class Game
 				wantToQuit = true;
 				break;
 			case "look":
-				// no info
+				LookAround();
 				break;
 		}
 
@@ -113,6 +113,12 @@ class Game
 	
 	// Print out some help information.
 	// Here we print the mission and a list of the command words.
+
+	private void LookAround()
+	{
+		Console.WriteLine(currentRoom.GetLongDescription());
+	}
+
 	private void PrintHelp()
 	{
 		Console.WriteLine("You are lost. You are alone.");
