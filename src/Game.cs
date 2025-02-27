@@ -40,11 +40,15 @@ class Game
 		office.AddExit("west", lab);
 		office.AddExit("up", hall);
 		
+		hall.AddExit("down", office);
+
 		// Create your Items here
 		// ...
+		Item axe = new Item(10, "1 tap = 1 kill");
+		Item sword = new Item(5, "2 tap = 1 kill");
 		// And add them to the Rooms
 		// ...
-		hall.AddExit("down", office);
+		
 
 
 		// Start game outside
