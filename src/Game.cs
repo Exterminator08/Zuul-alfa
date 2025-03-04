@@ -48,7 +48,7 @@ class Game
 		Item sword = new Item(5, "2 tap = 1 kill");
 		// And add them to the Rooms
 		// ...
-		
+		outside.AddItem(sword);
 
 
 		// Start game outside
