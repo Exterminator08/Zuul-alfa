@@ -4,21 +4,27 @@ class Player
     public Room CurrentRoom { get; set; }
 
     public int health { get; set; }
+    public Inventory Inventory { get; private set; }
     
     // constructor
     public Player()
     {
        CurrentRoom = null;
-       health = 100;
+       this.health = 100;
+       Inventory = new Inventory(10);
     }
 
     public int Damage(int amount)
     {
-        return this.health -= amount;
-    } // player loses some health
+        this.health -= amount;
+        if (this.health < 0) this.health = 0;
+        return this.health;
+    }
     public int Heal(int amount)
     {
-        return this.health += amount;
+        this.health += amount;
+        if (this.health > 100) this.health = 100;
+        return this.health;
 
     } // player's health restores
     public bool IsAlive()
@@ -28,10 +34,7 @@ class Player
 
 	public string GetStatus()
     {
-        string str = "You have ";
-		str += this.health;
-		str += ".\n";
-		return str;
+        return $"You have {this.health} health.\nInventory weight: {Inventory.TotalWeight()}/{Inventory.TotalWeight}";
     }
     
 }

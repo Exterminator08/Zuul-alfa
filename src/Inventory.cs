@@ -11,6 +11,11 @@ class Inventory
 
     public bool Put(string itemName, Item item)
     {
+        if (item.Weight + TotalWeight() <= maxWeight)
+        {
+            items[itemName] = item; // Add or replace item
+            return true;
+        }
         // TODO implement:
         // Check the Weight of the Item and check
         //  for enough space in the Inventory
@@ -21,6 +26,11 @@ class Inventory
 
     public Item Get(string itemName)
     {
+        if (items.TryGetValue(itemName, out Item item))
+        {
+            items.Remove(itemName); // Remove item if found
+            return item;
+        }
         // TODO implement:
         // Find Item in items Dictionary
         // remove Item from items Dictionary if found
@@ -31,6 +41,10 @@ class Inventory
     public int TotalWeight()
     {
         int total = 0;
+        foreach (var item in items.Values)
+        {
+            total += item.Weight;
+        }
         // TODO implement:
         // loop through the items, and add all the weights
         return total;
@@ -40,6 +54,6 @@ class Inventory
     {
         // TODO implement:
         // compare MaxWeight and TotalWeight()
-        return ;
+        return maxWeight - TotalWeight();
     }
 }
