@@ -150,6 +150,16 @@ class Game
 		parser.PrintValidCommands();
 	}
 
+	public void Take()
+	{
+
+	}
+
+	public void Drop()
+	{
+		
+	}
+
 	// Try to go to one direction. If there is an exit, enter the new
 	// room, otherwise print an error message.
 	private void GoRoom(Command command)
