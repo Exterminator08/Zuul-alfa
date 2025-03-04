@@ -5,6 +5,7 @@ class Game
 	// Private fields
 	private Parser parser;
 	private Player player;
+	// private Room currentRoom;
 
 	// Constructor
 	public Game()
@@ -23,12 +24,16 @@ class Game
 		Room pub = new Room("in the campus pub");
 		Room lab = new Room("in a computing lab");
 		Room office = new Room("in the computing admin office");
-		Room hall = new Room("in the second floor hall");
+		Room basement = new Room("in the basement");
+		Room attic = new Room("in the attic");
+
 
 		// Initialise room exits
 		outside.AddExit("east", theatre);
 		outside.AddExit("south", lab);
 		outside.AddExit("west", pub);
+		outside.AddExit("down", basement);
+		outside.AddExit("up", attic);
 
 		theatre.AddExit("west", outside);
 
@@ -38,43 +43,42 @@ class Game
 		lab.AddExit("east", office);
 
 		office.AddExit("west", lab);
-		office.AddExit("up", hall);
-		
-		hall.AddExit("down", office);
+
+		attic.AddExit("down", outside);
+		basement.AddExit("up", outside);
 
 		// Create your Items here
 		// ...
-		Item axe = new Item(10, "1 tap = 1 kill");
-		Item sword = new Item(5, "2 tap = 1 kill");
 		// And add them to the Rooms
 		// ...
-		outside.AddItem(sword);
-
 
 		// Start game outside
 		player.CurrentRoom = outside;
+		Item mousetail = new Item(3, "Why would you even want to pick up a mousetail?");
+
+
+		// outside.AddItem(mousetail);
+		outside.Chest.Put("mousetail", mousetail);
+
 	}
 
 	//  Main play routine. Loops until end of play.
 	public void Play()
-    {
-        PrintWelcome();
+	{
+		PrintWelcome();
 
-        bool finished = false;
-        while (!finished)
-        {
-            if (!player.IsAlive())
-            {
-                Console.WriteLine("You have lost all your health. Game over!");
-                break;
-            }
-            Command command = parser.GetCommand();
-            finished = ProcessCommand(command);
-        }
-        Console.WriteLine("Thank you for playing.");
-        Console.WriteLine("Press [Enter] to continue.");
-        Console.ReadLine();
-    }
+		// Enter the main command loop. Here we repeatedly read commands and
+		// execute them until the player wants to quit.
+		bool finished = false;
+		while (!finished)
+		{
+			Command command = parser.GetCommand();
+			finished = ProcessCommand(command);
+		}
+		Console.WriteLine("Thank you for playing.");
+		Console.WriteLine("Press [Enter] to continue.");
+		Console.ReadLine();
+	}
 
 	// Print out the opening message for the player.
 	private void PrintWelcome()
@@ -85,6 +89,7 @@ class Game
 		Console.WriteLine("Type 'help' if you need help.");
 		Console.WriteLine();
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+
 	}
 
 	// Given a command, process (that is: execute) the command.
@@ -94,7 +99,7 @@ class Game
 	{
 		bool wantToQuit = false;
 
-		if(command.IsUnknown())
+		if (command.IsUnknown())
 		{
 			Console.WriteLine("I don't know what you mean...");
 			return wantToQuit; // false
@@ -112,11 +117,18 @@ class Game
 				wantToQuit = true;
 				break;
 			case "look":
-				LookAround();
+				PrintLook();
 				break;
 			case "status":
 				PrintStatus();
 				break;
+			case "take":
+				Take(command);
+				break;
+			case "drop":
+				Drop(command);
+				break;
+
 		}
 
 		return wantToQuit;
@@ -125,22 +137,9 @@ class Game
 	// ######################################
 	// implementations of user commands:
 	// ######################################
-	
+
 	// Print out some help information.
 	// Here we print the mission and a list of the command words.
-
-	private void LookAround()
-	{
-		Console.WriteLine(player.CurrentRoom.GetLongDescription());
-	}
-
-	private void PrintStatus()
-	{
-		Console.WriteLine("Your health is: " + player.health);
-		Console.WriteLine(player.CurrentRoom.GetLongDescription());
-	}
-
-
 	private void PrintHelp()
 	{
 		Console.WriteLine("You are lost. You are alone.");
@@ -160,15 +159,13 @@ class Game
 
     string itemName = command.SecondWord;
 
-    // Ищем предмет в комнате
     Item item = player.CurrentRoom.items.Find(i => i.Name.ToLower() == itemName.ToLower());
 
     if (item != null)
     {
-        // Пробуем добавить предмет в инвентарь
-        if (player.Inventory.Put(itemName, item))
+        if (player.backpack.Put(itemName, item))
         {
-            player.CurrentRoom.items.Remove(item); // Убираем из комнаты
+            player.CurrentRoom.items.Remove(item);
             Console.WriteLine($"You picked up the {itemName}.");
         }
         else
@@ -182,27 +179,69 @@ class Game
     }
 }
 
+	private void PrintStatus()
+	{
+		Console.WriteLine("Your health is: " + player.health);
+		Console.WriteLine("Your backpack contains: " + player.backpack.ShowInventory());
+	}
+
+	private void PrintLook()
+	{
+		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+		Console.WriteLine("Items in the room: " + player.CurrentRoom.Chest.ShowInventory());
+	}
+
+	private void Drop(Command command)
+{
+    if (!command.HasSecondWord())
+    {
+        Console.WriteLine("Drop what?");
+        return;
+    }
+
+    string itemName = command.SecondWord;
+
+    Item item = player.backpack.Get(itemName);
+    if (item != null)
+    {
+        player.CurrentRoom.AddItem(item);
+        Console.WriteLine($"You dropped the {itemName}.");
+    }
+    else
+    {
+        Console.WriteLine($"You don't have a {itemName} to drop.");
+    }
+}
+
 	// Try to go to one direction. If there is an exit, enter the new
 	// room, otherwise print an error message.
 	private void GoRoom(Command command)
 	{
-        if(!command.HasSecondWord())
-        {
-            Console.WriteLine("Go where?");
-            return;
-        }
+		if (!command.HasSecondWord())
+		{
 
-        string direction = command.SecondWord;
-        Room nextRoom = player.CurrentRoom.GetExit(direction);
-        if (nextRoom == null)
-        {
-            Console.WriteLine("There is no door to " + direction + "!");
-            return;
-        }
 
-        player.CurrentRoom = nextRoom;
-        player.Damage(10); // Reduce health by 10 per move
-        Console.WriteLine(player.CurrentRoom.GetLongDescription());
-        Console.WriteLine("Your health is now: " + player.health);
-    }
+			// if there is no second word, we don't know where to go...
+			Console.WriteLine("Go where?");
+			return;
+		}
+
+		string direction = command.SecondWord;
+
+		// Try to go to the next room.
+		Room nextRoom = player.CurrentRoom.GetExit(direction);
+		if (nextRoom == null)
+		{
+			Console.WriteLine("There is no door to " + direction + "!");
+			return;
+		}
+
+		player.Damage(10);
+
+
+
+		player.CurrentRoom = nextRoom;
+		Console.WriteLine(player.CurrentRoom.GetLongDescription());
+	}
 }
+

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 class Room
 {
 	// Private fields
+
+
 	private string description;
 	private Dictionary<string, Room> exits; // stores exits of this room.
-
-	public List<Item> items;
+	private Inventory chest;
+	public List<Item> items; // stores items in this room
 
 	// Create a room described "description". Initially, it has no exits.
 	// "description" is something like "in a kitchen" or "in a court yard".
@@ -14,7 +16,8 @@ class Room
 	{
 		description = desc;
 		exits = new Dictionary<string, Room>();
-		items = new List<Item>();
+		items = new List<Item>(); // initialize the items list
+		chest = new Inventory(10000000); // initialize the chest
 	}
 
 	// Define an exit for this room.
@@ -60,6 +63,10 @@ class Room
 		str += String.Join(", ", exits.Keys);
 
 		return str;
+	}
+	public Inventory Chest
+	{
+		get { return chest; }
 	}
 
 	public void AddItem(Item item)
