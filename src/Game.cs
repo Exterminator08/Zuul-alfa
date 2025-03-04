@@ -182,30 +182,6 @@ class Game
     }
 }
 
-private void Drop(Command command)
-{
-    if (!command.HasSecondWord())
-    {
-        Console.WriteLine("Drop what?");
-        return;
-    }
-
-    string itemName = command.SecondWord;
-
-    // Пробуем взять предмет из инвентаря
-    Item item = player.Inventory.Get(itemName);
-    if (item != null)
-    {
-        player.CurrentRoom.AddItem(item); // Добавляем в комнату
-        Console.WriteLine($"You dropped the {itemName}.");
-    }
-    else
-    {
-        Console.WriteLine($"You don't have a {itemName} to drop.");
-    }
-}
-
-
 	// Try to go to one direction. If there is an exit, enter the new
 	// room, otherwise print an error message.
 	private void GoRoom(Command command)
