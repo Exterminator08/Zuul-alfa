@@ -48,20 +48,27 @@ class Player
 	public int Damage(int amount)
     {
         this.health -= amount;
-        if (this.health < 0) this.health = 0;
+        if (this.health < 0) {
+            this.health = 0;
+        }
         return this.health;
     }
     public int Heal(int amount)
     {
         this.health += amount;
-        if (this.health > 100) this.health = 100;
+        if (this.health > 100) {
+            this.health = 100;
+        }
         return this.health;
-
-    } // player's health restores
+    }
+    
     public bool IsAlive()
     {
-        return this.health > 0;
-    } // checks whether the player is alive or not
+        if(this.health < 1) {
+        Console.WriteLine("you died");
+        }
+        return this.health = 0;
+    }
 
 	public string GetStatus()
     {
