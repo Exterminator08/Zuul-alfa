@@ -66,14 +66,14 @@ class Game
 
 		// startRoom game startRoom
 		player.CurrentRoom = startRoom;
-		Item mousetail = new Item(1, "Why would you even want to pick up a mousetail? You still picked it up tho.");
-		Item poopotion = new Item(2, "You picked up a bottle which looks like all the colors combined... You are wondering if u should drink it.");
-		Item slingshot = new Item(1, "You picked up a slingshot. You can use it to shoot things.");
+		Item axe = new Item(15, "Why would you even want to pick up a mousetail? You still picked it up tho.");
+		Item pistol = new Item(5, "You picked up a bottle which looks like all the colors combined... You are wondering if u should drink it.");
+		Item sword = new Item(10, "You picked up a slingshot. You can use it to shoot things.");
 
 
-		abandonedSection.Chest.Put("mousetail", mousetail);
-		storageRoom.Chest.Put("poopotion", poopotion);
-		utilityRoom.Chest.Put("slingshot", slingshot);
+		abandonedSection.Chest.Put("axe", axe);
+		storageRoom.Chest.Put("pistol", pistol);
+		utilityRoom.Chest.Put("sword", sword);
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -300,29 +300,26 @@ class Game
 		}
 	}
 
-	private void OverFlowChamber(Command command)
-	{
-		// Console.WriteLine("aaaaa");
-		if (player.CurrentRoom == chamber) // Use a proper identifier
-		{
+	private async void OverFlowChamber(Command command)
+{
+    if (player.CurrentRoom == chamber) 
+    {
+        stopwatch.Stop();
+        int s = stopwatch.Elapsed.Seconds;
 
-			stopwatch.Stop();
-			int s = stopwatch.Elapsed.Seconds;
+        Console.WriteLine("You're struggling in the flooded chamber!");
 
-			for (int i = 0; i < s; i++)
-			{
-				player.Damage(5);
-			}
-			Console.WriteLine("You're struggling in the flooded chamber!");
+        for (int i = 0; i < s; i++)
+        {
+            player.Damage(5);
+            Console.WriteLine("-5hp");
+            await Task.Delay(1000); // Задержка в 1 секунду
+        }
 
-
-			if (!player.IsAlive())
-			{
-				Console.WriteLine("You drowned in the overflow chamber!");
-				// break;
-
-			}
-		}
-
-	}
+        if (!player.IsAlive())
+        {
+            Console.WriteLine("You drowned in the overflow chamber!");
+        }
+    }
+}
 }
