@@ -4,11 +4,12 @@ class Room
 {
 	// Private fields
 
-
+	public string Description { get; private set; }
 	private string description;
+
 	private Dictionary<string, Room> exits; // stores exits of this room.
 	private Inventory chest;
-	public List<Item> items; // stores items in this room
+	// private List<Item> items; // stores items in this room
 
 	// Create a room described "description". Initially, it has no exits.
 	// "description" is something like "in a kitchen" or "in a court yard".
@@ -16,9 +17,12 @@ class Room
 	{
 		description = desc;
 		exits = new Dictionary<string, Room>();
-		items = new List<Item>(); // initialize the items list
+		// items = new List<Item>(); // initialize the items list
+		//large inventory for chest
 		chest = new Inventory(10000000); // initialize the chest
+
 	}
+
 
 	// Define an exit for this room.
 	public void AddExit(string direction, Room neighbor)
@@ -64,13 +68,17 @@ class Room
 
 		return str;
 	}
+
+	// // Add an item to the room
+	// public void AddItem(Item item)
+	// {
+	// 	items.Add(item);
+	// }
+
+	//property
 	public Inventory Chest
 	{
 		get { return chest; }
 	}
 
-	public void AddItem(Item item)
-	{
-		items.Add(item);
-	}
 }

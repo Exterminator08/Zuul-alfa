@@ -1,9 +1,17 @@
 class Inventory
 {
-    //fields
+    // Fields
     private int maxWeight;
     private Dictionary<string, Item> items;
 
+    // Constructor
+    public Inventory(int maxWeight)
+    {
+        this.maxWeight = maxWeight;
+        items = new Dictionary<string, Item>();
+    }
+
+    // Methods
     public int TotalWeight()
     {
         int total = 0;
@@ -18,19 +26,12 @@ class Inventory
     {
         return maxWeight - TotalWeight();
     }
-    //constructor
-    public Inventory(int maxWeight)
-    {
-        this.maxWeight = maxWeight;
-        this.items = new Dictionary<string, Item>();
-    }
 
-    // methods
     public bool Put(string itemName, Item item)
     {
-        if (item.Weight + TotalWeight() <= maxWeight)
+        if (item.Weight <= FreeWeight())
         {
-            items[itemName] = item; // Add or replace item
+            items[itemName] = item;
             return true;
         }
         return false;
@@ -38,15 +39,11 @@ class Inventory
 
     public Item Get(string itemName)
     {
-        if (items.TryGetValue(itemName, out Item item))
-        {
-            items.Remove(itemName); // Remove item if found
-            return item;
-        }
-        return null;
+        items.TryGetValue(itemName, out Item item);
+        items.Remove(itemName);
+        return item;
     }
 
-    //method
     public void Remove(string itemName)
     {
         items.Remove(itemName);
@@ -56,8 +53,8 @@ class Inventory
     {
         if (items.Count == 0)
         {
-            return "";
+            return "Nothing";
         }
-        return "" + string.Join(", ", items.Keys);
+        return string.Join(", ", items.Keys);
     }
 }
