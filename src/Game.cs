@@ -6,6 +6,7 @@ class Game
 	// Private fields
 	private Parser parser;
 	private Player player;
+	private Enemy enemy;
 
 	private Stopwatch stopwatch;
 	private Room chamber;
@@ -14,6 +15,7 @@ class Game
 	// Constructor
 	public Game()
 	{
+		enemy = new Enemy();
 		parser = new Parser();
 		player = new Player();
 		CreateRooms();
@@ -33,6 +35,7 @@ class Game
 		Room stareWell2 = new Room("walking up the stairs but you are blocked by trash.");
 		Room overFlowChamber = new Room("in the overflow chamber. The water is rising and you are drowning.(You're taking 5 damage per second)");
 		chamber = overFlowChamber;
+		enemy.CurrentRoom = tunnel;
 
 		// Initialise room exits
 		startRoom.AddExit("east", tunnel);
@@ -201,7 +204,7 @@ class Game
 		// Item item = player.backpack.Get(itemName);
 
 
-		if (player.Use(itemName) == false)
+		if (!player.Use(itemName, enemy))
 		{
 			Console.WriteLine($"You don't have a {itemName} to use.");
 		}
@@ -210,6 +213,14 @@ class Game
 	private void PrintLook()
 	{
 		Console.WriteLine("Items in the room: " + player.CurrentRoom.Chest.ShowInventory());
+		if (enemy != null && enemy.CurrentRoom == player.CurrentRoom)
+ 		{
+ 			Console.WriteLine($"There is an {enemy} standing in front of you. It has {enemy.Health} health! Use your weapon to kill it");
+ 		}
+ 		else
+ 		{
+ 			Console.WriteLine("Enemies in the room: None");
+ 		}
 	}
 
 	// Try to go to one direction. If there is an exit, enter the new
@@ -235,7 +246,7 @@ class Game
 			return;
 		}
 
-		player.Damage(0);
+		player.Damage(5);
 
 		player.CurrentRoom = nextRoom;
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
