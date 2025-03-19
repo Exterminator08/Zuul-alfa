@@ -14,8 +14,6 @@ class Player
 
 		//100kg because we are strong
 		Backpack = new Inventory(25);
-        Item waterpistol = new Item(1, "waterpistol");
- 		Backpack.Put("waterpistol", waterpistol);
 	}
 
 	//methods
@@ -35,19 +33,19 @@ class Player
 		switch (itemName)
 		{
 			case "sword":
-				Console.WriteLine("You used the sword. It's a bit disgusting, but you feel a bit better.");
-				this.Heal(1);
+				Console.WriteLine("You used the sword.");
+				this.Damage(10);
 				Backpack.Remove(itemName);
 				break;
 			case "pistol":
-				Console.WriteLine("'Ugh, this tastes like absolute shit. Oh wait...' You feel a little worse after drinking this.");
-				this.Damage(5);
+				Console.WriteLine("You used the pistol.");
+				this.Damage(15);
 				break;
 			case "axe":
 			if (enemy != null && enemy.CurrentRoom == this.CurrentRoom)
  				{
  					Console.WriteLine("You used the axe on the enemy!");
- 					enemy.Damage(10); // Apply 10 damage to the enemy
+ 					enemy.Damage(5); // Apply 5 damage to the enemy
  					if (!enemy.IsAlive())
  					{
  						Console.WriteLine("You defeated the enemy!");

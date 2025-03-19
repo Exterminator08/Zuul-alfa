@@ -26,40 +26,42 @@ class Game
 	private void CreateRooms()
 	{
 		// Create the rooms
-		Room startRoom = new Room("at the beginning of the sewers. With a brick wall behind you.");
-		Room tunnel = new Room("in a a tunnel. It's dark and there's liquid dropping from the ceiling.");
-		Room utilityRoom = new Room("in a utility room. There are some tools laying around.");
-		Room abandonedSection = new Room("in an abandoned section of the sewers. It's packed full of dust and you can hear some strange noises.");
-		Room storageRoom = new Room("in a storage room. There are some boxes and barrels laying around.");
+		Room startRoom = new Room("you landed right on the roof of the building and it collapsed and in order to unlock the system in order to return home, you need to collect $10,000.");
+		Room corridor = new Room("There is a narrow corridor in front of you and a huge eye above, try not to look at it.");
+		Room toilet = new Room("in a utility room. There are some tools laying around.");
+		Room kitchen = new Room("Ugh! Mouse tails in a frying pan, it looks like Reuben's sewer. Don't you dare take the tail.");
+		Room utilityRoom = new Room("in a storage room. There are some boxes and barrels laying around.");
+		//!-------------------------------------- нижнюю часть надо сделать до стартовой комнаты
 		Room stareWell1 = new Room("walking down the stairs but you are blocked by trash.");
 		Room stareWell2 = new Room("walking up the stairs but you are blocked by trash.");
 		Room overFlowChamber = new Room("in the overflow chamber. The water is rising and you are drowning.(You're taking 5 damage per second)");
 		chamber = overFlowChamber;
-		enemy.CurrentRoom = tunnel;
+		enemy.CurrentRoom = corridor;
 
 		// Initialise room exits
-		startRoom.AddExit("east", tunnel);
-		startRoom.AddExit("south", abandonedSection);
-		startRoom.AddExit("west", utilityRoom);
+		startRoom.AddExit("east", corridor);
+		startRoom.AddExit("south", kitchen);
+		startRoom.AddExit("west", toilet);
+		//!-------------------------------------- нужно добавить и поправитт проходы этих комнат и переименовать комнаты и коменты к ним, затем изменить предметы на их ценности и что бы перс мог собраь юольше 10к тк у него только минимальный лимит 10к
 		startRoom.AddExit("down", stareWell1);
 
 
-		tunnel.AddExit("west", startRoom);
-		tunnel.AddExit("east", overFlowChamber);
-		overFlowChamber.AddExit("west", tunnel);
+		corridor.AddExit("west", startRoom);
+		corridor.AddExit("east", overFlowChamber);
+		overFlowChamber.AddExit("west", corridor);
 
 
-		utilityRoom.AddExit("east", startRoom);
+		toilet.AddExit("east", startRoom);
 
-		abandonedSection.AddExit("north", startRoom);
-		abandonedSection.AddExit("east", storageRoom);
+		kitchen.AddExit("north", startRoom);
+		kitchen.AddExit("east", utilityRoom);
 
-		storageRoom.AddExit("west", abandonedSection);
-		storageRoom.AddExit("up", stareWell2);
+		utilityRoom.AddExit("west", kitchen);
+		utilityRoom.AddExit("up", stareWell2);
 
 
 		stareWell1.AddExit("up", startRoom);
-		stareWell2.AddExit("down", storageRoom);
+		stareWell2.AddExit("down", utilityRoom);
 
 
 		// Create your Items here
@@ -69,14 +71,14 @@ class Game
 
 		// startRoom game startRoom
 		player.CurrentRoom = startRoom;
-		Item axe = new Item(15, "Why would you even want to pick up a mousetail? You still picked it up tho.");
-		Item pistol = new Item(5, "You picked up a bottle which looks like all the colors combined... You are wondering if u should drink it.");
-		Item sword = new Item(10, "You picked up a slingshot. You can use it to shoot things.");
+		Item axe = new Item(15, "You picked up an axe.");
+		Item pistol = new Item(5, "You picked up a pistol.");
+		Item sword = new Item(10, "You picked up a sword. ");
 
 
-		abandonedSection.Chest.Put("axe", axe);
-		storageRoom.Chest.Put("pistol", pistol);
-		utilityRoom.Chest.Put("sword", sword);
+		kitchen.Chest.Put("axe", axe);
+		utilityRoom.Chest.Put("pistol", pistol);
+		toilet.Chest.Put("sword", sword);
 	}
 
 	//  Main play routine. Loops until end of play.
@@ -114,9 +116,10 @@ class Game
 	private void PrintWelcome()
 	{
 		Console.WriteLine();
-		Console.WriteLine("Welcome to 'The Sewers' ");
-		Console.WriteLine("You fell into the sewers while working your regular 9-5.");
-		Console.WriteLine("U smell a really nasty air hanging around this place, and you don’t feel comfortable at all… ");
+		Console.WriteLine("Welcome to 'R.E.P.O.' ");
+		Console.WriteLine("You worked in a spaceship and were sent to earth to earn money.");
+		Console.WriteLine("You flew alone without friends. The report says that this building is uninhabited. However, you hear very scary screams and sounds.");
+		Console.WriteLine("Collect as many items with high monetary value as possible and return back to space!");
 		Console.WriteLine("Type 'help' if you need help.");
 		Console.WriteLine();
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
@@ -274,13 +277,13 @@ class Game
 
 		switch (itemName)
 		{
-			case "mousetail":
-				Console.WriteLine("Why would you even want to pick up a mousetail? You still picked it up tho. Dirty faggot 🤢");
+			case "sword":
+				Console.WriteLine("You picked up a sword.");
 				break;
-			case "poopotion":
-				Console.WriteLine("You picked up a bottle which looks like all the colors combined... You are wondering if you should drink it.");
+			case "pistol":
+				Console.WriteLine("You picked up a pistol.");
 				break;
-			default:
+			case "axe":
 				Console.WriteLine("You picked up the " + itemName + ".");
 				break;
 		}

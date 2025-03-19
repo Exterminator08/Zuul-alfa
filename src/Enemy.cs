@@ -13,7 +13,7 @@ class Enemy
         Health = 30;
 
         //100kg because we are strong
-        Backpack = new Inventory(25);
+        Backpack = new Inventory(5);
 
     }
 
