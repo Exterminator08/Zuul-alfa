@@ -60,12 +60,6 @@ class Player
 		return true;
 	}
 
-
-	// public bool DropToChest(string itemName)
-	// {
-	// 	return false;
-	// }
-
 	public int Damage(int amount)
 	{
 		this.Health -= amount;
