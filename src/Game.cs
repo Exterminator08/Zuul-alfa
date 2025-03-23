@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 
 class Game
@@ -10,7 +9,6 @@ class Game
 
 	private Stopwatch stopwatch;
 	private Room chamber;
-	// private Room currentRoom;
 
 	// Constructor
 	public Game()
@@ -26,29 +24,33 @@ class Game
 	private void CreateRooms()
 	{
 		// Create the rooms
-		Room startRoom = new Room("you landed right on the roof of the building and it collapsed and in order to unlock the system in order to return home, you need to collect $10,000.");
+		Room startRoom = new Room("You landed right on the roof of the building and it collapsed and in order to unlock the system in order to return home, you need to collect $10,000.");
 		Room corridor = new Room("There is a narrow corridor in front of you and a huge eye above, try not to look at it.");
-		Room toilet = new Room("in a utility room. There are some tools laying around.");
+		Room toilet = new Room("In a utility room. There are some tools laying around.");
 		Room kitchen = new Room("Ugh! Mouse tails in a frying pan, it looks like Reuben's sewer. Don't you dare take the tail.");
-		Room utilityRoom = new Room("in a storage room. There are some boxes and barrels laying around.");
-		//!-------------------------------------- нижнюю часть надо сделать до стартовой комнаты
-		Room stareWell1 = new Room("walking down the stairs but you are blocked by trash.");
-		Room stareWell2 = new Room("walking up the stairs but you are blocked by trash.");
-		Room overFlowChamber = new Room("in the overflow chamber. The water is rising and you are drowning.(You're taking 5 damage per second)");
-		chamber = overFlowChamber;
-		enemy.CurrentRoom = corridor;
+		Room utilityRoom = new Room("In a storage room. There are some boxes and barrels laying around.");
+		Room tower = new Room("An infinitely high tower and stairs, but I see something, maybe You can climb the stairs?");
+		Room stairs = new Room("So tired. Just a little bit more.");
+		Room stairs1 = new Room("So tired. Just a little bit more.");
+		Room stairs2 = new Room("So tired.. Just a little bit more.");
+		Room stairs3 = new Room("So tired... Just a little bit more.");
+		Room stairs4 = new Room("So tired.... Just a little bit more.");
+		Room stairs5 = new Room("So tired..... Just a little bit more.");
+		Room topOfTheTower = new Room("Finally you reached the top. STOP... WATT??? Look at this! Chest and teleport?!");
+		Room sauna = new Room("The human skeleton here is disgusting. Wait, what is he holding in his hands?");
+		chamber = sauna;
+		// enemy.CurrentRoom = corridor;
 
 		// Initialise room exits
 		startRoom.AddExit("east", corridor);
 		startRoom.AddExit("south", kitchen);
 		startRoom.AddExit("west", toilet);
 		//!-------------------------------------- нужно добавить и поправитт проходы этих комнат и переименовать комнаты и коменты к ним, затем изменить предметы на их ценности и что бы перс мог собраь юольше 10к тк у него только минимальный лимит 10к
-		startRoom.AddExit("down", stareWell1);
-
+		startRoom.AddExit("north", tower);
 
 		corridor.AddExit("west", startRoom);
-		corridor.AddExit("east", overFlowChamber);
-		overFlowChamber.AddExit("west", corridor);
+		corridor.AddExit("east", sauna);
+		sauna.AddExit("west", corridor);
 
 
 		toilet.AddExit("east", startRoom);
@@ -57,59 +59,34 @@ class Game
 		kitchen.AddExit("east", utilityRoom);
 
 		utilityRoom.AddExit("west", kitchen);
-		utilityRoom.AddExit("up", stareWell2);
 
 
-		stareWell1.AddExit("up", startRoom);
-		stareWell2.AddExit("down", utilityRoom);
+		tower.AddExit("south", startRoom);
+		tower.AddExit("up", stairs1);
+		stairs1.AddExit("up", stairs2);
+		stairs2.AddExit("up", stairs3);
+		stairs3.AddExit("up", stairs4);
+		stairs4.AddExit("up", stairs5);
+		stairs5.AddExit("up", stairs);
+		stairs.AddExit("up", topOfTheTower);
+		topOfTheTower.AddExit("teleport", tower);
 
-
-		// Create your Items here
-		// ...
-		// And add them to the Rooms
-		// ...
-
-		// startRoom game startRoom
 		player.CurrentRoom = startRoom;
-		Item axe = new Item(15, "You picked up an axe.");
-		Item pistol = new Item(5, "You picked up a pistol.");
-		Item sword = new Item(10, "You picked up a sword. ");
-
+		Item axe = new Item(500, "You picked up an axe.");
+		Item pistol = new Item(1200, "You picked up a pistol.");
+		Item minigun = new Item(2400, "You picked up a minigun.");
+		Item excalibur = new Item(4800, "You picked up an excalibur. ");
+		Item bible = new Item(9999, "You picked up a Bible. aura +999999999999 ");
+		Item koran = new Item(9999, "You picked up a Koran. aura +999999999999");
+		Item book = new Item(100, "You picked up a book. May be God can help you? Check the top of the tower.");
 
 		kitchen.Chest.Put("axe", axe);
 		utilityRoom.Chest.Put("pistol", pistol);
-		toilet.Chest.Put("sword", sword);
-	}
-
-	//  Main play routine. Loops until end of play.
-	public void Play()
-	{
-		PrintWelcome();
-
-		// Enter the main command loop. Here we repeatedly read commands and
-		bool finished = false;
-		// execute them until the player wants to quit.
-		while (!finished)
-		{
-
-			stopwatch.Start();
-
-			Command command = parser.GetCommand();
-			OverFlowChamber(command);
-
-
-			finished = ProcessCommand(command);
-			if (!player.IsAlive())
-			//! if player is NOT alive (!) then finished is true
-			{
-				finished = true;
-				Console.WriteLine("You died, noob!");
-			}
-			stopwatch.Reset();
-		}
-		Console.WriteLine("Thank you for playing.");
-		Console.WriteLine("Press [Enter] to continue.");
-		Console.ReadLine();
+		toilet.Chest.Put("excalibur", excalibur);
+		topOfTheTower.Chest.Put("bible", bible);
+		topOfTheTower.Chest.Put("koran", koran);
+		corridor.Chest.Put("minigun", minigun);
+		sauna.Chest.Put("book", book);
 	}
 
 	// Print out the opening message for the player.
@@ -126,9 +103,6 @@ class Game
 
 	}
 
-	// Given a command, process (that is: execute) the command.
-	// If this command ends the game, it returns true.
-	// Otherwise false is returned.
 	private bool ProcessCommand(Command command)
 	{
 		bool wantToQuit = false;
@@ -136,7 +110,7 @@ class Game
 		if (command.IsUnknown())
 		{
 			Console.WriteLine("I don't know what you mean...");
-			return wantToQuit; // false
+			return wantToQuit;
 		}
 
 		switch (command.CommandWord)
@@ -174,27 +148,35 @@ class Game
 		return wantToQuit;
 	}
 
-	// ######################################
-	// implementations of user commands:
-	// ######################################
-
-	// Print out some help information.
-	// Here we print the mission and a list of the command words.
 	private void PrintHelp()
 	{
 		Console.WriteLine("You are lost. You are alone.");
-		Console.WriteLine("You wander around in the sewers besides the stinky water.");
+		Console.WriteLine("You are alone here, no one will help you...");
+		Console.WriteLine("But here are the commands you can use.");
 		Console.WriteLine();
-		// let the parser print the commands
 		parser.PrintValidCommands();
 	}
 
 	private void PrintStatus()
-	{
-		Console.WriteLine("Your Health is: " + player.Health);
-		Console.WriteLine("Your suitcase contains: " + player.Backpack.ShowInventory());
-		Console.WriteLine("You are carrying: " + player.Backpack.TotalWeight() + "kg. You have " + player.Backpack.FreeWeight() + "kg free space.");
-	}
+{
+    Console.WriteLine("Your Health is: " + player.Health);
+    
+    Console.WriteLine("Your suitcase contains: " + player.Backpack.ShowInventory());
+
+    Console.WriteLine("You have collected: $" + player.Backpack.GetCurrentAmount());
+
+    // Достиг ли игрок цели по сумме
+    if (player.Backpack.IsTargetReached())
+    {
+        Console.WriteLine("You have already reached your target of $" + player.Backpack.TargetAmount + " or more.");
+    }
+    else
+    {
+        // Сколько еще нужно собрать
+        Console.WriteLine("You still need $" + (player.Backpack.TargetAmount - player.Backpack.GetCurrentAmount()) + " to reach your target.");
+    }
+}
+
 
 	private void PrintUse(Command command)
 	{
@@ -204,10 +186,9 @@ class Game
 			return;
 		}
 		string itemName = command.SecondWord;
-		// Item item = player.backpack.Get(itemName);
+		string target = command.HasThirdWord() ? command.ThirdWord : null;
 
-
-		if (!player.Use(itemName, enemy))
+		if (!player.Use(itemName, target, enemy))
 		{
 			Console.WriteLine($"You don't have a {itemName} to use.");
 		}
@@ -216,32 +197,30 @@ class Game
 	private void PrintLook()
 	{
 		Console.WriteLine("Items in the room: " + player.CurrentRoom.Chest.ShowInventory());
-		if (enemy != null && enemy.CurrentRoom == player.CurrentRoom)
- 		{
- 			Console.WriteLine($"There is an {enemy} standing in front of you. It has {enemy.Health} health! Use your weapon to kill it");
- 		}
- 		else
- 		{
- 			Console.WriteLine("Enemies in the room: None");
- 		}
+
+		//? in this game we don't need to see the enemy, but i have a code for it if you need it
+		// if (enemy != null && enemy.CurrentRoom == player.CurrentRoom)
+ 		// {
+ 		// 	Console.WriteLine($"There is an {enemy} standing in front of you. It has {enemy.Health} health! Use your weapon to kill it");
+ 		// }
+ 		// else
+ 		// {
+ 		// 	Console.WriteLine("Enemies in the room: None");
+ 		// }
 	}
 
-	// Try to go to one direction. If there is an exit, enter the new
-	// room, otherwise print an error message.
 	private void GoRoom(Command command)
 	{
 
 
 		if (!command.HasSecondWord())
 		{
-			// if there is no second word, we don't know where to go...
 			Console.WriteLine("Go where?");
 			return;
 		}
 
 		string direction = command.SecondWord;
 
-		// Try to go to the next room.
 		Room nextRoom = player.CurrentRoom.GetExit(direction);
 		if (nextRoom == null)
 		{
@@ -249,48 +228,42 @@ class Game
 			return;
 		}
 
-		player.Damage(5);
-
+		player.Damage(0); // niet nodig voor de game
 		player.CurrentRoom = nextRoom;
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 
 	}
 
-	//methods
-	private void Take(Command command)
-	{
-		if (!command.HasSecondWord())
-		{
-			Console.WriteLine("Take what?");
-			return;
-		}
+private void Take(Command command)
+{
+    if (!command.HasSecondWord())
+    {
+        Console.WriteLine("Take what?");
+        return;
+    }
 
-		string itemName = command.SecondWord;
+    string itemName = command.SecondWord;
+    Item item = player.CurrentRoom.Chest.Get(itemName);
 
-		Item item = player.CurrentRoom.Chest.Get(itemName);
+    if (item == null)
+    {
+        Console.WriteLine("There is no " + itemName + " in this room.");
+        return;
+    }
 
-		if (item == null)
-		{
-			Console.WriteLine("There is no " + itemName + " in this room.");
-			return;
-		}
+    // Проверка на достижение цели
+    if (!player.Backpack.CollectItem(itemName, item))
+    {
+        Console.WriteLine("You can't collect this item as you've already reached your target amount.");
+        return;
+    }
 
-		switch (itemName)
-		{
-			case "sword":
-				Console.WriteLine("You picked up a sword.");
-				break;
-			case "pistol":
-				Console.WriteLine("You picked up a pistol.");
-				break;
-			case "axe":
-				Console.WriteLine("You picked up the " + itemName + ".");
-				break;
-		}
-
-		player.Backpack.Put(itemName, item);
-
-	}
+    Console.WriteLine($"You picked up {itemName}. Your current total is ${player.Backpack.GetCurrentAmount()}.");
+    if (player.Backpack.GetCurrentAmount() >= player.Backpack.TargetAmount)
+    {
+        Console.WriteLine("You did it!");
+    }
+}
 
 	private void Drop(Command command)
 	{
@@ -314,26 +287,39 @@ class Game
 		}
 	}
 
-	private async void OverFlowChamber(Command command)
+	
+public void Play()
 {
-    if (player.CurrentRoom == chamber) 
+    PrintWelcome();
+
+    bool finished = false;
+    while (!finished)
     {
-        stopwatch.Stop();
-        int s = stopwatch.Elapsed.Seconds;
+        stopwatch.Start();
 
-        Console.WriteLine("You're struggling in the flooded chamber!");
+        Command command = parser.GetCommand();
 
-        for (int i = 0; i < s; i++)
-        {
-            player.Damage(5);
-            Console.WriteLine("-5hp");
-            await Task.Delay(1000); // Задержка в 1 секунду
-        }
-
+        finished = ProcessCommand(command);
         if (!player.IsAlive())
         {
-            Console.WriteLine("You drowned in the overflow chamber!");
+            finished = true;
+            Console.WriteLine("You died, noob!");
         }
+
+        // Проверка, если цель собрана (достигнута нужная сумма)
+        if (player.Backpack.IsTargetReached())
+        {
+            Console.WriteLine("Congratulations! You've collected enough money to complete the mission.");
+            Console.WriteLine("Press 2 times [Enter] to finish the game.");
+            Console.ReadLine();
+            finished = true;
+        }
+
+        stopwatch.Reset();
     }
+
+    Console.WriteLine("Thank you for playing.");
+    Console.WriteLine("Press [Enter] to continue.");
+    Console.ReadLine();
 }
 }

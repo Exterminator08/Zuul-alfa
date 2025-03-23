@@ -1,60 +1,73 @@
 class Inventory
 {
-    // Fields
-    private int maxWeight;
-    private Dictionary<string, Item> items;
+    public int TargetAmount { get; } 
+    private int currentAmount; 
+    private Dictionary<string, Item> collectedItems;
 
-    // Constructor
-    public Inventory(int maxWeight)
+    public Inventory(int targetAmount)
     {
-        this.maxWeight = maxWeight;
-        items = new Dictionary<string, Item>();
+        this.TargetAmount = targetAmount;
+        this.currentAmount = 0;
+        this.collectedItems = new Dictionary<string, Item>();
     }
 
-    // Methods
-    public int TotalWeight()
+    // Метод для добавления предмета
+    public bool CollectItem(string itemName, Item item)
     {
-        int total = 0;
-        foreach (var item in items.Values)
+        if (currentAmount >= TargetAmount)
         {
-            total += item.Weight;
+            return false;
         }
-        return total;
-    }
-
-    public int FreeWeight()
-    {
-        return maxWeight - TotalWeight();
+        
+        collectedItems[itemName] = item;
+        currentAmount += item.Price;  // Добавляем цену предмета
+        return true;
     }
 
     public bool Put(string itemName, Item item)
     {
-        if (item.Weight <= FreeWeight())
-        {
-            items[itemName] = item;
-            return true;
-        }
-        return false;
+        collectedItems[itemName] = item;
+        currentAmount += item.Price;
+        return true;
     }
 
     public Item Get(string itemName)
     {
-        items.TryGetValue(itemName, out Item item);
-        items.Remove(itemName);
-        return item;
+        if (collectedItems.TryGetValue(itemName, out Item item))
+        {
+            collectedItems.Remove(itemName);
+            currentAmount -= item.Price;
+            return item;
+        }
+        return null;
     }
 
     public void Remove(string itemName)
     {
-        items.Remove(itemName);
+        if (collectedItems.TryGetValue(itemName, out Item item))
+        {
+            collectedItems.Remove(itemName);
+            currentAmount -= item.Price;
+        }
     }
 
     public string ShowInventory()
     {
-        if (items.Count == 0)
+        if (collectedItems.Count == 0)
         {
-            return "Nothing";
+            return "No items collected";
         }
-        return string.Join(", ", items.Keys);
+        return string.Join(", ", collectedItems.Keys);
+    }
+
+    public int GetCurrentAmount()
+    {
+        return currentAmount;
+    }
+
+    // Метод, который проверяет, достиг ли игрок цели
+    public bool IsTargetReached()
+    {
+        return currentAmount >= TargetAmount;
     }
 }

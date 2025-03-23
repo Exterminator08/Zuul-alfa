@@ -1,26 +1,17 @@
 class Player
 {
-
-	//fields
-	//auto property
 	public int Health { get; private set; }
 	public Room CurrentRoom { get; set; }
 	public Inventory Backpack { get; private set; }
-	//constructor
+
 	public Player()
 	{
 		CurrentRoom = null;
 		Health = 100;
-
-		//100kg because we are strong
-		Backpack = new Inventory(25);
+		Backpack = new Inventory(10000); // сколько денег нужно собрать
 	}
 
-	//methods
-
-
-	//use the item
-	public bool Use(string itemName, Enemy enemy)
+	public bool Use(string itemName, string target, Enemy enemy)
 	{
 		Item item = Backpack.Get(itemName);
 
