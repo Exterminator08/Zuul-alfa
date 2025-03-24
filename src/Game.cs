@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 class Game
 {
@@ -8,7 +9,8 @@ class Game
 	private Enemy enemy;
 
 	private Stopwatch stopwatch;
-	private Room chamber;
+
+	private Room startRoom;
 
 	// Constructor
 	public Game()
@@ -24,7 +26,7 @@ class Game
 	private void CreateRooms()
 	{
 		// Create the rooms
-		Room startRoom = new Room("You landed right on the roof of the building and it collapsed and in order to unlock the system in order to return home, you need to collect $10,000.");
+		startRoom = new Room("You landed right on the roof of the building and it collapsed and in order to unlock the system in order to return home, you need to collect $10,000. If you have collected all the money, you can use it here");
 		Room corridor = new Room("There is a narrow corridor in front of you and a huge eye above, try not to look at it.");
 		Room toilet = new Room("In a utility room. There are some tools laying around.");
 		Room kitchen = new Room("Ugh! Mouse tails in a frying pan, it looks like Reuben's sewer. Don't you dare take the tail.");
@@ -38,14 +40,12 @@ class Game
 		Room stairs5 = new Room("So tired..... Just a little bit more.");
 		Room topOfTheTower = new Room("Finally you reached the top. STOP... WATT??? Look at this! Chest and teleport?!");
 		Room sauna = new Room("The human skeleton here is disgusting. Wait, what is he holding in his hands?");
-		chamber = sauna;
 		// enemy.CurrentRoom = corridor;
 
 		// Initialise room exits
 		startRoom.AddExit("east", corridor);
 		startRoom.AddExit("south", kitchen);
 		startRoom.AddExit("west", toilet);
-		//!-------------------------------------- нужно добавить и поправитт проходы этих комнат и переименовать комнаты и коменты к ним, затем изменить предметы на их ценности и что бы перс мог собраь юольше 10к тк у него только минимальный лимит 10к
 		startRoom.AddExit("north", tower);
 
 		corridor.AddExit("west", startRoom);
@@ -179,20 +179,38 @@ class Game
 
 
 	private void PrintUse(Command command)
-	{
-		if (!command.HasSecondWord())
-		{
-			Console.WriteLine("Use what?");
-			return;
-		}
-		string itemName = command.SecondWord;
-		string target = command.HasThirdWord() ? command.ThirdWord : null;
+{
+    if (!command.HasSecondWord())
+    {
+        Console.WriteLine("Use what?");
+        return;
+    }
 
-		if (!player.Use(itemName, target, enemy))
-		{
-			Console.WriteLine($"You don't have a {itemName} to use.");
-		}
-	}
+    string itemName = command.SecondWord;
+
+    if (itemName == "money")
+    {
+        if (player.CurrentRoom == startRoom && player.Backpack.IsTargetReached())  
+        {
+            Console.WriteLine("Congratulations! You successfully delivered the money and completed the mission!");
+            Console.WriteLine("Press [Enter] to finish the game.");
+            Console.ReadLine();  // Ожидание перед завершением
+            Environment.Exit(0);  // Завершаем программу
+        }
+        else
+        {
+            Console.WriteLine("You need to be in the start room to use the money.");
+        }
+    }
+    else
+    {
+        if (!player.Use(itemName, enemy))
+        {
+            Console.WriteLine($"You don't have a {itemName} to use.");
+        }
+    }
+}
+
 
 	private void PrintLook()
 	{
@@ -293,6 +311,8 @@ public void Play()
     PrintWelcome();
 
     bool finished = false;
+    bool targetReached = false;  // Флаг, достиг ли игрок нужной суммы
+
     while (!finished)
     {
         stopwatch.Start();
@@ -300,26 +320,26 @@ public void Play()
         Command command = parser.GetCommand();
 
         finished = ProcessCommand(command);
+
         if (!player.IsAlive())
         {
             finished = true;
             Console.WriteLine("You died, noob!");
         }
 
-        // Проверка, если цель собрана (достигнута нужная сумма)
-        if (player.Backpack.IsTargetReached())
+        // Если игрок собрал нужную сумму, уведомляем его, но не завершаем игру
+        if (player.Backpack.IsTargetReached() && !targetReached)
         {
-            Console.WriteLine("Congratulations! You've collected enough money to complete the mission.");
-            Console.WriteLine("Press 2 times [Enter] to finish the game.");
-            Console.ReadLine();
-            finished = true;
+            Console.WriteLine("You have collected enough money! Return to the start room and use 'use money' to finish the game.");
+            targetReached = true;  // Устанавливаем флаг, чтобы сообщение больше не повторялось
         }
 
         stopwatch.Reset();
     }
 
     Console.WriteLine("Thank you for playing.");
-    Console.WriteLine("Press [Enter] to continue.");
+    Console.WriteLine("Press [Enter] to exit.");
     Console.ReadLine();
 }
+
 }

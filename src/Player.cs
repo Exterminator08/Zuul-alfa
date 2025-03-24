@@ -11,7 +11,7 @@ class Player
 		Backpack = new Inventory(10000); // сколько денег нужно собрать
 	}
 
-	public bool Use(string itemName, string target, Enemy enemy)
+	public bool Use(string itemName, Enemy enemy)
 	{
 		Item item = Backpack.Get(itemName);
 
