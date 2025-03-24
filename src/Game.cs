@@ -254,7 +254,7 @@ class Game
 			return;
 		}
 
-		player.Damage(0); // niet nodig voor de game
+		player.Damage(5); // niet nodig voor de game
 		player.CurrentRoom = nextRoom;
 		Console.WriteLine(player.CurrentRoom.GetLongDescription());
 
