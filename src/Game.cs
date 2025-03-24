@@ -38,11 +38,11 @@ class Game
 		Room stairs3 = new Room("So tired... Just a little bit more.");
 		Room stairs4 = new Room("So tired.... Just a little bit more.");
 		Room stairs5 = new Room("So tired..... Just a little bit more.");
-		Room topOfTheTower = new Room("Finally you reached the top. STOP... WATT??? Look at this! Chest and teleport?!");
+		Room topOfTheTower = new Room("Finally you reached the top. WAIT... WHAT??? Look at this! God and teleport?!");
 		Room sauna = new Room("The human skeleton here is disgusting. Wait, what is he holding in his hands?");
+
 		// enemy.CurrentRoom = corridor;
 
-		// Initialise room exits
 		startRoom.AddExit("east", corridor);
 		startRoom.AddExit("south", kitchen);
 		startRoom.AddExit("west", toilet);
@@ -71,6 +71,14 @@ class Game
 		stairs.AddExit("up", topOfTheTower);
 		topOfTheTower.AddExit("teleport", tower);
 
+		topOfTheTower.AddExit("down", stairs);
+		stairs.AddExit("down", stairs5);
+		stairs5.AddExit("down", stairs4);
+		stairs4.AddExit("down", stairs3);
+		stairs3.AddExit("down", stairs2);
+		stairs2.AddExit("down", stairs1);
+		stairs1.AddExit("down", tower);
+		
 		player.CurrentRoom = startRoom;
 		Item axe = new Item(500, "You picked up an axe.");
 		Item pistol = new Item(1200, "You picked up a pistol.");
@@ -311,7 +319,7 @@ public void Play()
     PrintWelcome();
 
     bool finished = false;
-    bool targetReached = false;  // Флаг, достиг ли игрок нужной суммы
+    bool targetReached = false;  // Достиг ли игрок нужной суммы
 
     while (!finished)
     {
@@ -331,7 +339,7 @@ public void Play()
         if (player.Backpack.IsTargetReached() && !targetReached)
         {
             Console.WriteLine("You have collected enough money! Return to the start room and use 'use money' to finish the game.");
-            targetReached = true;  // Устанавливаем флаг, чтобы сообщение больше не повторялось
+            targetReached = true;
         }
 
         stopwatch.Reset();
